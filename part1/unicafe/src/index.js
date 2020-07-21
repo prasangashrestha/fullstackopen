@@ -1,7 +1,19 @@
 import React, {useState} from "react";
 import ReactDOM from "react-dom";
 
+const Statistic = ({text, value}) => {
+  return (
+    <td>
+      {text} {value}
+    </td>
+  );
+};
+
 const Statistics = ({good, bad, neutral}) => {
+  const all = () => {
+    return good + bad + neutral;
+  };
+
   const averageScore = () => {
     return (good - bad) / (good + bad + neutral);
   };
@@ -13,14 +25,37 @@ const Statistics = ({good, bad, neutral}) => {
   return (
     <div>
       <h1>statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      <p>average {averageScore()}</p>
-      <p>positive feedback {positiveFeedback()}%</p>
+      <table>
+        <tbody>
+          <tr>
+            <Statistic text='good' value={good}></Statistic>
+          </tr>
+          <tr>
+            <Statistic text='neutral' value={neutral}></Statistic>
+          </tr>
+          <tr>
+            <Statistic text='bad' value={bad}></Statistic>
+          </tr>
+          <tr>
+            <Statistic text='all' value={all()}></Statistic>
+          </tr>
+          <tr>
+            <Statistic text='average score' value={averageScore()}></Statistic>
+          </tr>
+          <tr>
+            <Statistic
+              text='positive feedback'
+              value={positiveFeedback()}
+            ></Statistic>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
+};
+
+const Button = ({onClick, children}) => {
+  return <button onClick={onClick}>{children}</button>;
 };
 
 const App = () => {
@@ -44,9 +79,9 @@ const App = () => {
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={setGoodClick}>good</button>
-      <button onClick={setNeutralClick}>neutral</button>
-      <button onClick={setBadClick}>bad</button>
+      <Button onClick={setGoodClick}>good</Button>
+      <Button onClick={setNeutralClick}>neutral</Button>
+      <Button onClick={setBadClick}>bad</Button>
 
       {good || neutral || bad ? (
         <Statistics good={good} neutral={neutral} bad={bad} />
