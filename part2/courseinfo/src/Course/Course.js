@@ -1,12 +1,16 @@
 import React from "react";
 
-const Course = ({course: {id, name, parts}}) => {
+const Part = ({name, exercises}) => {
+  return (
+    <p>
+      {name} {exercises}
+    </p>
+  );
+};
+
+const Content = ({name, parts}) => {
   const partsMapped = parts.map((part) => {
-    return (
-      <p key={part.id}>
-        {part.name}: {part.exercises}
-      </p>
-    );
+    return <Part key={part.id} {...part} />;
   });
 
   const totalExercises = parts.reduce((accumulator, currentValue) => {
@@ -15,9 +19,22 @@ const Course = ({course: {id, name, parts}}) => {
 
   return (
     <div>
-      <h1>{name}</h1>
+      <h2>{name}</h2>
       {partsMapped}
-      <p>total of {totalExercises} exercises </p>
+      <h5>total of {totalExercises} exercises</h5>
+    </div>
+  );
+};
+
+const Course = ({courses}) => {
+  const coursesMapped = courses.map((course) => {
+    return <Content key={course.id} {...course} />;
+  });
+
+  return (
+    <div>
+      <h1>Web development curriculum</h1>
+      {coursesMapped}
     </div>
   );
 };
