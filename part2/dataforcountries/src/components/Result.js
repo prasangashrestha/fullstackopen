@@ -15,7 +15,7 @@ const Result = ({country: {name, capital, population, languages, flag}}) => {
         ))}
       </ul>
 
-      <img src={flag} alt={name} />
+      <img src={flag} alt={name} style={{width: "200px", height: "200px"}} />
     </div>
   );
 };

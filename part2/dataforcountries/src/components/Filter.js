@@ -3,14 +3,33 @@ import Result from "./Result";
 
 const Search = ({countries}) => {
   const [searchCountry, setSearchCountry] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState({});
+  const [show, setShow] = useState(false);
 
   const handleFilter = (e) => {
     setSearchCountry(e.target.value);
   };
 
+  const handleToggle = (country) => {
+    setShow(true);
+    setSelectedCountry(country);
+  };
+
   //filter the country based on the search
   const filterCountry = countries.filter((country) => {
     return country.name.toLowerCase().includes(searchCountry.toLowerCase());
+  });
+
+  //render a list of countries when results are less than 10
+  const renderCountries = filterCountry.map((country) => {
+    return (
+      <div>
+        <p key={country.alpha3Code}>
+          {country.name}
+          <button onClick={() => handleToggle(country)}>show</button>
+        </p>
+      </div>
+    );
   });
 
   //rendering results based on the conditions
@@ -25,9 +44,7 @@ const Search = ({countries}) => {
         return <Result country={filterCountry[0]} />;
       } else {
         //list out all the countries
-        return filterCountry.map((country) => (
-          <p key={country.alpha3Code}>{country.name}</p>
-        ));
+        return renderCountries;
       }
     }
   };
@@ -38,6 +55,7 @@ const Search = ({countries}) => {
       <input type='text' value={searchCountry} onChange={handleFilter} />
 
       {switchResult()}
+      {show && <Result country={selectedCountry} />}
     </div>
   );
 };
