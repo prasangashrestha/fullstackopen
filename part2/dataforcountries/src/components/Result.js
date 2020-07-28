@@ -8,14 +8,14 @@ const Result = ({country: {name, capital, population, languages, flag}}) => {
       <p>capital {capital}</p>
       <p>population {population}</p>
 
-      <h2>languages</h2>
+      <h2>Spoken languages</h2>
       <ul>
         {languages.map((language) => (
           <li key={language.iso639_1}>{language.name}</li>
         ))}
       </ul>
 
-      <img src={flag} alt={name} style={{width: "200px", height: "200px"}} />
+      <img src={flag} alt={name} style={{width: "120px", height: "120px"}} />
     </div>
   );
 };
