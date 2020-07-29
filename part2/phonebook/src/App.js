@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import personService from "./services/persons";
 import axios from "axios";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
@@ -11,9 +12,7 @@ const App = () => {
   const [filterName, setFilterName] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
-    });
+    personService.getAll().then((initialPersons) => setPersons(initialPersons));
   }, []);
 
   const handleName = (e) => {
@@ -26,14 +25,23 @@ const App = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newPersons = [...persons, {name: newName, number: newNumber}];
+    // const newPersons = [...persons, {name: newName, number: newNumber}];
     const sameNameCheck = persons.some((person) => person.name === newName);
 
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    };
+
+    //check if the number is already in the list and add it in the persons array
     sameNameCheck
       ? alert(`${newName} is already added in the phone book`)
-      : setPersons(newPersons);
+      : personService
+          .create(personObject)
+          .then((returnedPerson) => setPersons([...persons, returnedPerson]));
 
-    setNewName("");
+    //check if the number is already on the list and add it to the database
+    !sameNameCheck && setNewName("");
     setNewNumber("");
   };
 
