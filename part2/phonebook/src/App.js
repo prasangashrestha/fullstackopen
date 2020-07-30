@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
 import personService from "./services/persons";
-import axios from "axios";
 import Filter from "./Filter";
 import PersonForm from "./PersonForm";
 import Persons from "./Persons";
@@ -11,21 +10,35 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
 
+  //getting the data after first render
   useEffect(() => {
     personService.getAll().then((initialPersons) => setPersons(initialPersons));
-  }, []);
+  }, [persons]);
 
-  const handleName = (e) => {
-    setNewName(e.target.value);
+  //delete the person after clicking the person
+  const handleDelete = (personToDelete) => {
+    if (window.confirm(`Delete ${personToDelete}`)) {
+      const selectedPerson = persons.find(
+        (person) => person.name === personToDelete
+      );
+
+      personService.deletePerson(selectedPerson);
+    }
   };
 
-  const handleNumber = (e) => {
-    setNewNumber(e.target.value);
+  //update existing user in the db
+  const handleUpdate = (personToUpdate) => {
+    const personObject = persons.find(
+      (person) => person.name === personToUpdate
+    );
+
+    const updatedObject = {...personObject, number: newNumber};
+
+    personService.updatePerson(personObject.id, updatedObject);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // const newPersons = [...persons, {name: newName, number: newNumber}];
+  //create new user in the db
+  const handleCreate = () => {
     const sameNameCheck = persons.some((person) => person.name === newName);
 
     const personObject = {
@@ -34,15 +47,37 @@ const App = () => {
     };
 
     //check if the number is already in the list and add it in the persons array
-    sameNameCheck
-      ? alert(`${newName} is already added in the phone book`)
-      : personService
-          .create(personObject)
-          .then((returnedPerson) => setPersons([...persons, returnedPerson]));
-
-    //check if the number is already on the list and add it to the database
+    if (sameNameCheck) {
+      if (
+        window.confirm(
+          `${newName} is already added in the phone book, replace the old number with new one`
+        )
+      ) {
+        handleUpdate(newName);
+      }
+    } else {
+      personService
+        .createPerson(personObject)
+        .then((returnedPerson) => setPersons([...persons, returnedPerson]));
+    }
     !sameNameCheck && setNewName("");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //create a new person with validation
+    handleCreate();
+
     setNewNumber("");
+  };
+
+  //Event handlers
+  const handleName = (e) => {
+    setNewName(e.target.value);
+  };
+
+  const handleNumber = (e) => {
+    setNewNumber(e.target.value);
   };
 
   const handleFilter = (e) => {
@@ -64,7 +99,11 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} filterName={filterName} />
+      <Persons
+        persons={persons}
+        filterName={filterName}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
