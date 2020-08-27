@@ -9,11 +9,12 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
+  const [successMessage, setSuccessMessage] = useState('')
 
   //getting the data after first render
   useEffect(() => {
     personService.getAll().then((initialPersons) => setPersons(initialPersons));
-  }, [persons]);
+  }, []);
 
   //delete the person after clicking the person
   const handleDelete = (personToDelete) => {
@@ -23,6 +24,8 @@ const App = () => {
       );
 
       personService.deletePerson(selectedPerson);
+
+      setPersons(persons.filter(person => person.id !== selectedPerson.id))
     }
   };
 
